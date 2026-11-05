@@ -1,0 +1,33 @@
+/* Cancun Hotel Experience — estilo Caribe elegante */
+:root{--mar:#103e50;--mar-oscuro:#082b3a;--turquesa:#147f8a;--arena:#f8f4ed;--dorado:#c69a55;--texto:#233b45}
+body{background:var(--arena);color:var(--texto);min-height:100vh;font-family:'Segoe UI',Arial,sans-serif}
+.bg-primary,.navbar.bg-primary{background:var(--mar-oscuro)!important}
+.navbar{box-shadow:0 3px 18px rgba(5,37,47,.12)}
+.navbar-brand{font-weight:700;letter-spacing:.4px}
+.btn-primary{background:var(--mar);border-color:var(--mar)}
+.btn-primary:hover,.btn-primary:focus{background:var(--turquesa);border-color:var(--turquesa)}
+.btn-warning{background:var(--dorado);border-color:var(--dorado);color:#162d33;font-weight:700}
+.btn-warning:hover{background:#dbb675;border-color:#dbb675;color:#162d33}
+.hero{position:relative;isolation:isolate;overflow:hidden;min-height:420px;display:flex;align-items:center;background:linear-gradient(90deg,rgba(5,35,49,.88),rgba(6,67,77,.38)),url('https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1800&q=85') center/cover no-repeat;border-radius:24px!important;box-shadow:0 18px 40px rgba(15,60,70,.15)}
+.hero-content{position:relative;z-index:1;max-width:850px}
+.hero-eyebrow{text-transform:uppercase;letter-spacing:3px;color:#f0d5a7;font-size:.8rem;font-weight:700}
+.hero h1{font-family:Georgia,'Times New Roman',serif;font-size:clamp(2.5rem,5vw,4.4rem);font-weight:700;line-height:1.08;text-shadow:0 2px 10px rgba(0,0,0,.18)}
+.hero p{font-size:1.12rem;max-width:610px;color:#f4f7f7}
+.hero-search{background:rgba(255,255,255,.97);padding:9px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.16)}
+.hero-search .form-control{border:0;box-shadow:none;min-height:44px}
+.hero-search .btn{padding-inline:24px;border-radius:9px}
+.section-kicker{text-transform:uppercase;letter-spacing:2.4px;color:#98713e;font-size:.77rem;font-weight:700}
+.section-heading{font-family:Georgia,'Times New Roman',serif;color:var(--mar-oscuro);font-size:clamp(1.65rem,3vw,2.35rem)}
+.hotel-img{height:230px;object-fit:cover;width:100%}
+.placeholder-image{display:grid;place-items:center;background:linear-gradient(135deg,#a5d6d7,#f2d9ac);font-family:Georgia,serif;font-size:2rem;font-weight:bold;color:#075b86}
+.card{border:1px solid rgba(19,71,80,.07);border-radius:18px;overflow:hidden;background:#fff;transition:transform .2s ease,box-shadow .2s ease}
+.card:hover{transform:translateY(-4px);box-shadow:0 15px 34px rgba(21,66,76,.13)!important}
+.hotel-card .card-body{padding:1.5rem}
+.hotel-card h5{font-family:Georgia,'Times New Roman',serif;font-size:1.35rem;color:var(--mar-oscuro)}
+.hotel-zone{color:#69818b;font-size:.92rem}
+.hotel-price{font-size:1.28rem;font-weight:800;color:var(--mar)}
+.hotel-price small{font-size:.77rem;color:#77868b;font-weight:400}
+.hotel-card .btn{border-radius:10px;padding:.7rem 1rem;font-weight:600}
+.empty-hotels{background:#fff;border:1px solid #eadfce;border-radius:18px;padding:2.2rem;text-align:center;color:#5e7278}
+.auth{max-width:480px}
+@media(max-width:576px){.hero{min-height:400px;padding:2rem!important}.hero-search{flex-direction:column!important}.hero-search .btn{width:100%}.hotel-img{height:210px}}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero p-5 mb-5 text-white">
+  <div class="hero-content w-100">
+    <div class="hero-eyebrow mb-3">Cancún · Caribe mexicano</div>
+    <h1 class="mb-3">Tu próxima escapada<br>comienza aquí</h1>
+    <p class="mb-4">Descubre experiencias frente al mar, rincones inolvidables y estancias inspiradas en la belleza de Cancún.</p>
+    <form class="hero-search d-flex gap-2" method="get">
+      <input class="form-control" name="q" value="{{ q }}" placeholder="¿Qué hotel o zona deseas explorar?" aria-label="Buscar hotel o zona">
+      <button class="btn btn-warning" type="submit">Buscar hoteles</button>
+    </form>
+  </div>
+</section>
+<section class="mb-4">
+  <div class="section-kicker mb-2">Hospitalidad y experiencias</div>
+  <h2 class="section-heading mb-2">Encuentra tu lugar ideal</h2>
+  <p class="text-secondary mb-0">Explora nuestra selección de alojamientos de demostración.</p>
+</section>
+<div class="row g-4 mb-5">
+  {% for h in hoteles %}
+  <div class="col-md-6 col-lg-4">
+    <article class="card hotel-card h-100 shadow-sm">
+      {% if h.imagen %}
+      <img class="card-img-top hotel-img" src="{{ h.imagen }}" alt="Imagen de {{ h.nombre }}" loading="lazy">
+      {% else %}
+      <div class="hotel-img placeholder-image">Cancún</div>
+      {% endif %}
+      <div class="card-body d-flex flex-column">
+        <div class="hotel-zone mb-2">{{ h.zona }}</div>
+        <h5 class="mb-3">{{ h.nombre }}</h5>
+        <p class="text-secondary">{{ h.descripcion[:130] }}</p>
+        <div class="mt-auto">
+          <div class="hotel-price mb-1">{{ h.precio|mxn }} <small>/ noche</small></div>
+          <p class="small text-secondary mb-3">Habitaciones disponibles: {{ h.habitaciones }}</p>
+          <a class="btn btn-primary w-100" href="{{ url_for('detalle', hotel_id=h._id) }}">Explorar hotel</a>
+        </div>
+      </div>
+    </article>
+  </div>
+  {% else %}
+  <div class="col-12"><div class="empty-hotels">
+    <h3 class="section-heading fs-4">Próximamente, nuevas experiencias</h3>
+    <p class="mb-0">Todavía no hay hoteles registrados. El administrador puede agregar el primero.</p>
+  </div></div>
+  {% endfor %}
+</div>
+{% endblock %}
