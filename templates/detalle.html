@@ -1,1 +1,140 @@
-{% extends 'base.html' %}{% block content %}<div class="row g-4"><div class="col-lg-7"><h1>{{hotel.nombre}}</h1><p class="text-secondary">{{hotel.zona}}</p>{% if hotel.imagen %}<img class="img-fluid rounded-4 mb-3" src="{{hotel.imagen}}" alt="{{hotel.nombre}}">{% endif %}<p>{{hotel.descripcion}}</p><h4>{{hotel.precio|mxn}} por noche</h4><p>Habitaciones disponibles (inventario global de demostración): {{hotel.habitaciones}}</p></div><div class="col-lg-5"><div class="card p-4 shadow-sm"><h4>Reservar estancia</h4><p class="small text-secondary">Simulación sin pago. La disponibilidad no se calcula por fechas.</p><form method="post" action="{{url_for('reservar',hotel_id=hotel._id)}}"><label class="form-label">Entrada</label><input class="form-control mb-3" type="date" name="entrada" required><label class="form-label">Salida</label><input class="form-control mb-3" type="date" name="salida" required><label class="form-label">Huéspedes</label><input class="form-control mb-3" type="number" min="1" max="8" value="2" name="huespedes" required><button class="btn btn-primary w-100" {% if hotel.habitaciones < 1 %}disabled{% endif %}>Confirmar reserva</button></form></div></div></div>{% endblock %}
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row g-4">
+
+    <div class="col-lg-7">
+        <h1>{{ hotel.nombre }}</h1>
+
+        <p class="text-secondary">{{ hotel.zona }}</p>
+
+        {% if hotel.imagen %}
+        <img
+            class="img-fluid rounded-4 mb-3"
+            src="{{ hotel.imagen }}"
+            alt="{{ hotel.nombre }}"
+        >
+        {% endif %}
+
+        <p>{{ hotel.descripcion }}</p>
+
+        <h4>{{ hotel.precio|mxn }} por noche</h4>
+
+        <p class="text-secondary">
+            Habitaciones registradas:
+            {{ hotel.capacidad_total|default(hotel.habitaciones) }}
+        </p>
+
+        <div class="alert alert-info">
+            La disponibilidad se comprobará según
+            las fechas que selecciones.
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+
+        <div class="card p-4 shadow-sm">
+
+            <h4>Reservar estancia</h4>
+
+            <p class="small text-secondary">
+                Aparta una habitación durante 5 minutos
+                y confirma antes de que termine el tiempo.
+            </p>
+
+            <form
+                method="post"
+                action="{{ url_for('reservar', hotel_id=hotel._id) }}"
+            >
+
+                <label class="form-label">Entrada</label>
+
+                <input
+                    class="form-control mb-3"
+                    type="date"
+                    name="entrada"
+                    id="entrada"
+                    required
+                >
+
+                <label class="form-label">Salida</label>
+
+                <input
+                    class="form-control mb-3"
+                    type="date"
+                    name="salida"
+                    id="salida"
+                    required
+                >
+
+                <label class="form-label">Huéspedes</label>
+
+                <input
+                    class="form-control mb-3"
+                    type="number"
+                    min="1"
+                    max="8"
+                    value="2"
+                    name="huespedes"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="btn btn-primary w-100"
+                >
+                    Apartar habitación por 5 minutos
+                </button>
+
+            </form>
+
+            <p class="small text-secondary mt-3 mb-0">
+                Esta es una simulación.
+                No se realizará ningún cobro.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const entrada = document.getElementById("entrada");
+    const salida = document.getElementById("salida");
+
+    const hoy = new Date();
+    const fechaLocal = new Date(
+        hoy.getTime() - hoy.getTimezoneOffset() * 60000
+    ).toISOString().split("T")[0];
+
+    entrada.min = fechaLocal;
+    salida.min = fechaLocal;
+
+    entrada.addEventListener("change", function () {
+
+        if (!entrada.value) return;
+
+        const siguiente = new Date(entrada.value + "T12:00:00");
+        siguiente.setDate(siguiente.getDate() + 1);
+
+        const minimo = new Date(
+            siguiente.getTime() -
+            siguiente.getTimezoneOffset() * 60000
+        ).toISOString().split("T")[0];
+
+        salida.min = minimo;
+
+        if (salida.value && salida.value < minimo) {
+            salida.value = "";
+        }
+    });
+
+});
+</script>
+
+{% endblock %}

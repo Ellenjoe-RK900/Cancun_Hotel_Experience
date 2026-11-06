@@ -1,1 +1,293 @@
-{% extends 'base.html' %}{% block content %}<h1>Mis reservas</h1><div class="row g-3">{% for r in reservas %}<div class="col-md-6"><div class="card p-3"><h4>{{r.hotel_nombre}}</h4><p>{{r.entrada}} al {{r.salida}} · {{r.noches}} noches · {{r.huespedes}} huéspedes</p><p><strong>Total estimado:</strong> {{r.total|mxn}}</p><p>Estado: {{r.estado}}</p>{% if r.estado == 'confirmada' %}<form method="post" action="{{url_for('cancelar',reserva_id=r._id)}}"><button class="btn btn-outline-danger">Cancelar reserva</button></form>{% endif %}</div></div>{% else %}<p>Todavía no tienes reservaciones.</p>{% endfor %}</div>{% endblock %}
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <h1 class="mb-3">Mis reservas</h1>
+
+    <p class="text-secondary mb-4">
+        Consulta, confirma o cancela tus reservaciones
+        en Cancún Hotel Experience.
+    </p>
+
+    <div class="row g-4">
+
+        {% for r in reservas %}
+
+        <div class="col-md-6">
+
+            <div class="card shadow-sm h-100 border-0 rounded-4">
+
+                <div class="card-body p-4">
+
+                    <h4 class="mb-3">
+                        {{ r.hotel_nombre }}
+                    </h4>
+
+                    <p>
+                        <strong>Entrada:</strong>
+                        {{ r.entrada }}
+                    </p>
+
+                    <p>
+                        <strong>Salida:</strong>
+                        {{ r.salida }}
+                    </p>
+
+                    <p>
+                        <strong>Noches:</strong>
+                        {{ r.noches }}
+                    </p>
+
+                    <p>
+                        <strong>Huéspedes:</strong>
+                        {{ r.huespedes }}
+                    </p>
+
+                    <p>
+                        <strong>Total estimado:</strong>
+                        {{ r.total|mxn }}
+                    </p>
+
+                    <hr>
+
+                    {% if r.estado == 'temporal' %}
+
+                    <div
+                        class="reserva-temporal"
+                        data-vence="{{ r.vence_en.isoformat() }}"
+                    >
+
+                        <span class="badge bg-warning text-dark mb-3">
+                            Reserva temporal
+                        </span>
+
+                        <div class="alert alert-warning text-center">
+
+                            <p class="mb-2">
+                                Tiempo restante para confirmar:
+                            </p>
+
+                            <h2 class="contador fw-bold mb-0">
+                                05:00
+                            </h2>
+
+                        </div>
+
+                        <div class="progress mb-3" style="height: 10px;">
+
+                            <div
+                                class="progress-bar bg-warning barra-tiempo"
+                                role="progressbar"
+                                style="width: 100%;"
+                            ></div>
+
+                        </div>
+
+                        <p class="small text-secondary">
+                            Confirma tu habitación antes de que
+                            termine el contador.
+                        </p>
+
+                        <form
+                            method="post"
+                            action="{{ url_for('confirmar', reserva_id=r._id) }}"
+                            class="mb-2"
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn btn-success w-100 boton-confirmar"
+                            >
+                                Confirmar reservación
+                            </button>
+
+                        </form>
+
+                        <form
+                            method="post"
+                            action="{{ url_for('cancelar', reserva_id=r._id) }}"
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn btn-outline-danger w-100"
+                            >
+                                Cancelar reserva
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                    {% elif r.estado == 'confirmada' %}
+
+                    <div class="alert alert-success">
+
+                        <strong>Reserva confirmada</strong>
+
+                        <p class="mb-0">
+                            Tu habitación está reservada
+                            para las fechas seleccionadas.
+                        </p>
+
+                    </div>
+
+                    <form
+                        method="post"
+                        action="{{ url_for('cancelar', reserva_id=r._id) }}"
+                    >
+
+                        <button
+                            type="submit"
+                            class="btn btn-outline-danger w-100"
+                        >
+                            Cancelar reservación
+                        </button>
+
+                    </form>
+
+                    {% elif r.estado == 'cancelada' %}
+
+                    <div class="alert alert-secondary">
+
+                        <strong>Reserva cancelada</strong>
+
+                        <p class="mb-0">
+                            La habitación volvió a estar
+                            disponible para otros clientes.
+                        </p>
+
+                    </div>
+
+                    {% elif r.estado == 'vencida' %}
+
+                    <div class="alert alert-danger">
+
+                        <strong>Reserva vencida</strong>
+
+                        <p class="mb-0">
+                            El tiempo terminó y la habitación
+                            fue liberada automáticamente.
+                        </p>
+
+                    </div>
+
+                    {% else %}
+
+                    <p>
+                        Estado: {{ r.estado }}
+                    </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% else %}
+
+        <div class="col-12">
+
+            <div class="alert alert-info">
+
+                Todavía no tienes reservaciones.
+
+                <a href="{{ url_for('index') }}">
+                    Explorar hoteles
+                </a>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const reservasTemporales =
+        document.querySelectorAll(".reserva-temporal");
+
+    reservasTemporales.forEach(function (reserva) {
+
+        const contador = reserva.querySelector(".contador");
+        const barra = reserva.querySelector(".barra-tiempo");
+        const boton = reserva.querySelector(".boton-confirmar");
+
+        const vencimiento = new Date(
+            reserva.dataset.vence
+        ).getTime();
+
+        const duracionTotal = 5 * 60 * 1000;
+
+        function actualizarContador() {
+
+            const ahora = Date.now();
+
+            const restante = Math.max(
+                0,
+                vencimiento - ahora
+            );
+
+            const segundos = Math.ceil(restante / 1000);
+
+            const minutos = Math.floor(segundos / 60);
+
+            const segundosRestantes = segundos % 60;
+
+            contador.textContent =
+                String(minutos).padStart(2, "0") +
+                ":" +
+                String(segundosRestantes).padStart(2, "0");
+
+            const porcentaje = Math.min(
+                100,
+                (restante / duracionTotal) * 100
+            );
+
+            barra.style.width = porcentaje + "%";
+
+            if (restante <= 0) {
+
+                clearInterval(intervalo);
+
+                contador.textContent = "00:00";
+
+                boton.disabled = true;
+
+                boton.textContent = "Tiempo agotado";
+
+                barra.classList.remove("bg-warning");
+
+                barra.classList.add("bg-danger");
+
+                setTimeout(function () {
+                    window.location.reload();
+                }, 1200);
+
+            }
+
+        }
+
+        const intervalo = setInterval(
+            actualizarContador,
+            1000
+        );
+
+        actualizarContador();
+
+    });
+
+});
+</script>
+
+{% endblock %}
